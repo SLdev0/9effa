@@ -53,7 +53,7 @@ export default function Packs() {
 
 
     return (
-        <div className='w-full py-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 packs'>
+        <div className='w-full py-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 packs'>
             {!done && Array.from({ length: 5 }, (_, i) => (
                 <div className="flex flex-col space-y-3" key={i}>
                     <Skeleton className="w-full rounded-xl aspect-square" />
