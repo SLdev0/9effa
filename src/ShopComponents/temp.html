@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    https://www.classcroute.com/carte/pause-dejeuner
+    <script>
+        <div className="overflow-y-scroll no-scrollbar">
+            {bio.map((bioel) => (
+                <Card className="w-full grid" key={bioel.id}>
+                    <CardHeader>
+                        <img className='rounded-t-xl w-auto object-contain aspect-square' src={bioel.images[0].src} alt={bioel.name} />
+                    </CardHeader>
+                    <CardContent>
+                        <h2 className='font-bold text-xl'>{bioel.name} </h2>
+                        <p>{bioel.desc}</p>
+                    </CardContent>
+                    <CardFooter className="flex w-full justify-between items-center pb-3">
+                        <p className='font-bold text-lg'>{bioel.price}.د.م</p>
+                        {/* {packsInCarts.some((el) => el.id == bioel.id) ? (
+                                        <Button data-value={bioel.id} onClick={(e) => { handleClickRemove(props.id) }} className="after:content-[''] after:w-full after:h-full after:absolute after:inset-0 after:bg-transparent after:!rounded-full relative bg-red-400 !rounded-full p-2 aspect-square hover:bg-red-400/70 focus:bg-red-400/90 w-[31px] h-[31px]">
+                                            <Cross1Icon className='text-white add_icon' />
+                                        </Button>
+                                    ) : (
+                                        <Button data-value={bioel.id} onClick={(e) => { handleClickRemove(props.id) }} className="after:content-[''] after:w-full after:h-full after:absolute after:inset-0 after:bg-transparent after:!rounded-full relative bg-red-400 !rounded-full p-2 aspect-square hover:bg-red-400/70 focus:bg-red-400/90 w-[31px] h-[31px]">
+                                            <Cross1Icon className='text-white add_icon' />
+                                        </Button>
+                                    )} */}
+
+                        <Button data-value={bioel.id} className="after:content-[''] after:w-full after:h-full after:absolute after:inset-0 after:bg-transparent after:!rounded-full relative bg-red-400 !rounded-full p-2 aspect-square hover:bg-red-400/70 focus:bg-red-400/90 w-[31px] h-[31px]">
+                            <Cross1Icon className='text-white add_icon' />
+                        </Button>
+                    </CardFooter>
+                </Card>
+            ))}
+
+            {PreparedV.map((pv) => (
+                <Card className="w-full grid" key={pv.id}>
+                    <CardHeader>
+                        <img className='rounded-t-xl w-auto object-contain aspect-square' src={pv.images[0].src} alt={pv.name} />
+                    </CardHeader>
+                    <CardContent>
+                        <h2 className='font-bold text-xl'>{pv.name} </h2>
+                        <p>{pv.desc}</p>
+                    </CardContent>
+                    <CardFooter className="flex w-full justify-between items-center pb-3">
+                        <p className='font-bold text-lg'>{pv.price}.د.م</p>
+                        <Button data-value={pv.id} className="after:content-[''] after:w-full after:h-full after:absolute after:inset-0 after:bg-transparent after:!rounded-full relative bg-red-400 !rounded-full p-2 aspect-square hover:bg-red-400/70 focus:bg-red-400/90 w-[31px] h-[31px]">
+                            <Cross1Icon className='text-white add_icon' />
+                        </Button>
+                    </CardFooter>
+                </Card>
+            ))}
+        </div>
+
+
+        //_________ SideMenu code 53line
+
+        // useEffect(() => {
+        //     setFruits(JSON.parse(sessionStorage.getItem('localfruits')));
+        //     setVegetables(JSON.parse(sessionStorage.getItem('localVegetables')));
+        //     setBio(JSON.parse(sessionStorage.getItem('localbio')));
+        //     setPreparedV(JSON.parse(sessionStorage.getItem('localPreparedV')));
+        //     setFinished(true);
+        // }, []);
+
+        useEffect(() => {
+            // Get cart products from session storage
+            const storedCartProducts = JSON.parse(sessionStorage.getItem('CartItems'));
+            setCartProducts(storedCartProducts);
+
+            // Function to update elements
+            // const updateElements = () => {
+            const elements = document.querySelectorAll('.Grcard');
+            elements.forEach(element => {
+                const dataId = element.getAttribute('data-id');
+                const inputElement = element.querySelector('input[type="checkbox"]');
+                cartProducts.forEach(product => {
+                    console.log(product.id, dataId)
+                    if (dataId === product.id) {
+                        element.classList.add('seleted', 'shadow-2xl', 'transform', '-translate-y-2');
+                        inputElement.checked = true;
+                    }
+                });
+            });
+            // };
+
+            // Call the function when cartProducts.id changes
+            // updateElements();
+        }, []);
+
+        useEffect(() => {
+            // Get cart products from session storage
+            const storedCartProducts = JSON.parse(sessionStorage.getItem('CartItems'));
+            // check if products in the cart and show them
+            const elements = document.querySelectorAll('.Grcard');
+            elements.forEach(element => {
+                const dataId = element.getAttribute('data-id');
+                const inputElement = element.querySelector('input[type="checkbox"]');
+                storedCartProducts.forEach(product => {
+                    const dataIdNumber = parseInt(dataId);
+                    if (dataIdNumber === product.id) {
+                        element.classList.add('seleted', 'shadow-2xl', 'transform', '-translate-y-2');
+                        inputElement.checked = true;
+                    }
+                });
+            });
+
+        }, []);
+
+
+
+
+        // Bafore Add to cart function
+        function handleClick(p_id, type, source, e) {
+            if (source !== "headerParent") {
+                AddToCart(p_id, type);
+                addElementCoveringExisting(e.target)
+            }
+        }
+
+        // call add to cart funcion in Cart Component using CustomEvent
+        function AddToCart(p_id, type) {
+            var event = new CustomEvent("AddToCartEvent", { detail: { id: p_id, type: type } });
+            window.dispatchEvent(event);
+        }
+
+        function addElementCoveringExisting(element) {
+            const existingElement = element
+            const rect = existingElement.getBoundingClientRect();
+            const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const newElement = document.createElement("div");
+            newElement.style.position = "absolute";
+            newElement.style.top = rect.top + scrollTop + "px";
+            newElement.style.left = rect.left + scrollLeft + "px";
+            newElement.style.width = rect.width + "px";
+            newElement.style.height = rect.height + "px";
+            newElement.setAttribute('data-value', existingElement.getAttribute('data-id'));
+            newElement.onclick = () => { handleClickRemove(existingElement.getAttribute('data-id'), source) };
+            const classes = ['RemoveFromCartBtn', '!z-50', 'rounded-full', 'bg-red-400', 'hover:bg-[#fa9b9b]', 'flex', 'items-center', 'justify-center', 'cursor-pointer', 'after:w-full', 'after:h-full', 'after:absolute', 'after:inset-0', 'after:bg-transparent', 'after:!rounded-full'];
+            classes.forEach(className => {
+                newElement.classList.add(className);
+            });
+            newElement.innerHTML = `<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-white add_icon"><path d="M12.8536 2.85355C13.0488 2.65829 13.0488 2.34171 12.8536 2.14645C12.6583 1.95118 12.3417 1.95118 12.1464 2.14645L7.5 6.79289L2.85355 2.14645C2.65829 1.95118 2.34171 1.95118 2.14645 2.14645C1.95118 2.34171 1.95118 2.65829 2.14645 2.85355L6.79289 7.5L2.14645 12.1464C1.95118 12.3417 1.95118 12.6583 2.14645 12.8536C2.34171 13.0488 2.65829 13.0488 2.85355 12.8536L7.5 8.20711L12.1464 12.8536C12.3417 13.0488 12.6583 13.0488 12.8536 12.8536C13.0488 12.6583 13.0488 12.3417 12.8536 12.1464L8.20711 7.5L12.8536 2.85355Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg>`
+            existingElement.parentNode.insertBefore(newElement, existingElement);
+            return newElement;
+        }
+
+        // Bafore Remove from cart function
+        function handleClickRemove(p_id, source) {
+            if (source !== "headerParent") {
+                RemoveFromCart(p_id);
+            }
+        }
+
+        // call Remove From cart funcion in Cart Component using CustomEvent
+        function RemoveFromCart(p_id) {
+            var event = new CustomEvent("removeItemFromCartEvent", { detail: { id: p_id } });
+            window.dispatchEvent(event);
+        }
+
+
+        // //get data from strage to show it in cart 
+        // useEffect(() => {
+        //     if (cartProducts) {
+        //         const cartProductsDataT = cartProducts.map((productCart) => {
+        //             const product = products.find((p) => p.id == productCart.id);
+        //             return product;
+        //         });
+        //         setCartProductsData(cartProductsDataT);
+        //         cartProductsData.map((el) => {
+        //             let temp = Number(el.price);
+        //             setTotalPrice(TotalPrice += temp);
+        //         })
+        //         setisItemInCart(true)
+        //     }
+        // }, [cartProducts, products]);
+
+
+
+        // if (Finished) {
+        //     // checks if item in cart
+        //     // const AddItems = document.querySelectorAll('.additionalItems');
+        //     // AddItems.forEach(element => {
+        //     //     const dataId = element.getAttribute('data-id');
+        //     //     const RemoveBtn = element.querySelector('.RemoveBtn');
+        //     //     const AdddBtn = element.querySelector('.AdddBtn');
+        //     //     storedCartProducts.forEach(product => {
+        //     //         const dataIdNumber = parseInt(dataId);
+        //     //         if (dataIdNumber === product.id) {
+        //     //             AdddBtn.classList.add('hidden');
+        //     //         } else {
+        //     //             RemoveBtn.classList.add('hidden');
+        //     //         }
+        //     //     });
+        //     // });
+
+        //     // // set price and pack in top side nav if exists
+        //     // setAllproducts(allTempProducts)
+        //     // storedCartProducts.forEach(product => {
+        //     //     if (product.type == 'Pack') {
+        //     //         allTempProducts.forEach(pData => {
+        //     //             if (pData.id === product.id) {
+        //     //                 setPackDetails(pData)
+        //     //             }
+        //     //         })
+        //     //     }
+        //     // })
+        // }
+
+
+        useEffect(() => {
+            const storedCartProducts = JSON.parse(sessionStorage.getItem('CartItems'));
+            console.log(storedCartProducts)
+        }, [])
+
+
+
+        // if (storedCartProducts) {
+        //     storedCartProducts.map((el) => {
+        //         bio.map((bioEl) => {
+        //             if (bioEl.id === el.id) {
+        //                 return { ...bioEl, isInCart: true };
+        //             }
+        //             return { ...bioEl, isInCart: false };
+        //         });
+
+        //     })
+
+        //     storedCartProducts.map((el) => {
+        //         PreparedV.map((prevEl) => {
+        //             if (prevEl.id === el.id) {
+        //                 return { ...prevEl, isInCart: true };
+        //             }
+        //             return { ...prevEl, isInCart: false };
+        //         });
+        //     })
+        // }
+
+
+
+        // add item to cart
+        // function AddToCart(event) {
+        //     const id = event.detail.id;
+        //     const type = event.detail.type;
+        //     let CartItems = sessionStorage.getItem('CartItems');
+        //     let items = [];
+        //     if (CartItems !== null) {
+        //         try {
+        //             items = JSON.parse(CartItems);
+        //         } catch (error) {
+        //             console.error('Error parsing sessionStorage data:', error);
+        //         }
+        //     }
+
+        //     let found = false;
+        //     items.forEach(item => {
+        //         if (item.id === id) {
+        //             found = true;
+        //         }
+        //     });
+
+        //     if (!found) {
+        //         items.push({ id: id, type: type, quantity: 1 });
+        //     }
+
+        //     sessionStorage.setItem('CartItems', JSON.stringify(items));
+        //     window.dispatchEvent(new Event("PAddedToCartEvent"));
+        // }
+
+
+        // function AddToCartEventFunction(e) {
+    //     let tempData = [];
+    //     console.log(tempData)
+    //     setCartExtraProducts(tempData);
+    //     console.log(CartExtraProducts)
+    //     const cartItems = JSON.parse(sessionStorage.getItem('CartItems'));
+    //     Allproducts.forEach(pData => {
+    //         if (pData.id === cartItems.id && cartItems.type !== 'Pack') {
+    //             tempData = [...CartExtraProducts, pData.price];
+    //         }
+    //     })
+    //     Allproducts.forEach(pData => {
+    //         if (pData.id === e.detail.id && e.detail.type !== 'Pack') {
+    //             tempData = [...CartExtraProducts, pData.price];
+    //         }
+    //     })
+    //     setCartExtraProducts(tempData);
+    // }
+
+
+
+
+    import React from 'react';
+import { useParams } from 'react-router-dom';
+
+export default function Aliments() {
+    const { type } = useParams();
+
+    let message;
+    if (type === 'Fruits') {
+        message = 'Fruits';
+    } else if (type === 'Légumes') {
+        message = 'Légumes';
+    } else {
+        message = 'Welcome to Aliments!';
+    }
+
+    return (
+        <div>
+            {message}
+        </div>
+    );
+}
+
+// const urls = [
+        //   'https://client.lahza.ma/paiement/?add-to-cart=9377',
+        //   'https://client.lahza.ma/paiement/?add-to-cart=9375'
+
+        //    https://client.lahza.ma/paiement/?add-to-cart=9387&quantity=4.5
+        //    https://client.lahza.ma/paiement/?add-to-cart=9387&quantity=4.5
+
+        //    https://client.lahza.ma/paiement/?add-to-cart=9385&quantity=1.5
+        //    https://client.lahza.ma/paiement/?add-to-cart=9387&quantity=0.5
+        // ];
+
+
+                // result :
+                //  [
+                //     {
+                //         id: 0,
+                //             name: 'Poids',
+                //                 slug: 'Poids',
+                //                     position: 0,
+                //                         visible: true,
+                //                             variation: false,
+                //                                 options: [ '500g', '1kg', '2kg', '3kg' ]
+                //     }
+                // ]
+
+    </script>
+</body>
+
+</html>
