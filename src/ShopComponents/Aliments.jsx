@@ -110,7 +110,7 @@ export default function Aliments() {
     };
 
     return (
-        <div className='w-full py-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 2xl:grid-cols-8 gap-5 packs px-0'>
+        <div className='w-full py-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 2xl:grid-cols-8 gap-5 packs px-0'>
             {!done && Array.from({ length: 8 }, (_, i) => (
                 <div className="flex flex-col space-y-3" key={i}>
                     <Skeleton className="w-full rounded-xl aspect-square" />
